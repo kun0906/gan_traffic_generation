@@ -120,7 +120,7 @@ if __name__ == '__main__':
     # wgan_gp_model=build_model(training_set)
     generated_data_num = 1000
     g_input_size = 3
-    generated_results_out_dir_tmp = os.path.join(results_data_dir, str(generated_data_num) + 'generated_samples')
+    generated_results_out_dir_tmp = os.path.join(results_data_dir, str(generated_data_num) + '_generated_samples')
     if not os.path.exists(generated_results_out_dir_tmp):
         os.mkdir(generated_results_out_dir_tmp)
     for i in range(2):
