@@ -10,22 +10,17 @@
 
 __author__ = 'Learn-Live'
 
-
+import os
 import time
 
-from utils.data_loader import normalize_data
-from utils.show_save import save_data
-
-
-import os
-
+import matplotlib.pyplot as plt
 import torch
-import torchvision
+import torch.utils.data as Data
 from torch import nn
 from torch.autograd import Variable
-import torch.utils.data as Data
 from torch.utils.data import DataLoader
-import matplotlib.pyplot as plt
+from utils.data_loader import normalize_data
+from utils.show_save import save_data
 
 
 def print_net(net, describe_str='Net'):
