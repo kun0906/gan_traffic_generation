@@ -141,7 +141,7 @@ def achieved_wgan_generated_data(input_file,sample_ratio=1,training_set_percent=
     print('X.shape:', X.shape, ' Y.shape:', np.asarray(Y).shape)
     print('label:', Counter(Y))
 
-    features_selected= [ str(i) for i in range(X.shape[1])]  # re-define new features name, E.g. '0', '1', ...
+    features_selected = [str(i) for i in range(X.shape[1])]  # re-define new features name, E.g. '0', '1', ...
 
     show_flg = True
     save_flg = True
@@ -154,8 +154,8 @@ def achieved_wgan_generated_data(input_file,sample_ratio=1,training_set_percent=
     mini_batch_size = 50
     epochs = 0  # invalid for my function, can't be str
 
-    root_dir = './original_data_wgan_data_'+'%.2f'%percent+'percent_' + time.strftime("%Y%m%d-%H:%M:%S",
-                                                                                        time.localtime())
+    root_dir = './original_data_wgan_data_' + '%.2f' % percent + 'percent_' + time.strftime("%Y%m%d-%H:%M:%S",
+                                                                                            time.localtime())
     if not os.path.exists(root_dir):
         os.mkdir(root_dir)
 
@@ -174,7 +174,6 @@ def achieved_wgan_generated_data(input_file,sample_ratio=1,training_set_percent=
         testing_file_lst = [os.path.join(root_dir, str(test_percent) + '_origin_testing_set.arff'),
                             os.path.join(root_dir, str(test_percent) + '_testing_set.csv')]
         merge_files(testing_file_lst, header='header.txt', feature_lst=features_selected)  # add_arff_header
-
 
     nn_size_lst = [in_size, h_size, out_size]
 

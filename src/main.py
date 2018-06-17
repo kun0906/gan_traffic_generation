@@ -120,9 +120,9 @@ if __name__ == '__main__':
     # wgan_gp_model=build_model(training_set)
     generated_data_num = 1000
     g_input_size = 3
-    generated_results_out_dir_tmp = os.path.join(results_data_dir, str(generated_data_num) + '_generated_samples')
-    if not os.path.exists(generated_results_out_dir_tmp):
-        os.mkdir(generated_results_out_dir_tmp)
+    generated_results_out_dir = os.path.join(results_data_dir, str(generated_data_num) + '_generated_samples')
+    if not os.path.exists(generated_results_out_dir):
+        os.mkdir(generated_results_out_dir)
     for i in range(2):
         if i == 0:
             data_flg = 'BENIGN'
@@ -130,8 +130,7 @@ if __name__ == '__main__':
         else:
             data_flg = 'ATTACK'
             label = 0
-        output_file = os.path.join(generated_results_out_dir_tmp, data_flg + '.txt')
-
+        output_file = os.path.join(generated_results_out_dir, data_flg + '.txt')
         wgan_gp_model = build_model(training_set, data_flg)
 
         # step 2.1 generated data
