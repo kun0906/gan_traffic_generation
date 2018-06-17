@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
+"""
+ @ wgan_gp_class
+
+ created on 20180615
+"""
+
+__author__ = 'Learn-Live'
+
 import time
 from collections import Counter
-import os
 
-import torch
-import torch.utils.data as Data
-import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.utils.data as Data
 from torch import optim
 from torch.autograd import Variable, grad
-from torchvision import datasets, transforms
 
 from utilties.showcase import show_figures_2, show_figures
 

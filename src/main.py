@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
 
 """
- @ main
+ @ main : entry point
 
  created on 20180615
 """
 
+__author__ = 'Learn-Live'
+
+
 import logging as lg
 import os
-import random
 import sys
 import time
+
 import torch
 
-import numpy as np
-
 from utilties.data_preprocess import load_data_from_file, select_features, normalize_data, change_label, \
-    handle_abnormal_values, remove_features, sample_data, divide_training_testing_data, save_data
-from colorlog import ColoredFormatter
-
+    handle_abnormal_values, divide_training_testing_data, save_data
 from wgan_gp_class import WGAN_GP
 
 lg_level = lg.DEBUG
@@ -65,8 +64,8 @@ def preprocess_data(X, Y):
 
 
 def build_model(training_set, data_flg='BENIGN'):
-    X=torch.Tensor(training_set['X'])
-    Y=torch.Tensor(training_set['Y'])
+    X = torch.Tensor(training_set['X'])
+    Y = torch.Tensor(training_set['Y'])
     in_size = X.shape[1]
     h_size = 12
     out_size = 1
@@ -75,10 +74,10 @@ def build_model(training_set, data_flg='BENIGN'):
     nn_size_lst = [in_size, h_size, out_size, g_input_size]
     critic = 3  # D update times per G
     distance_threshold = 0.05
-    show_flg=True
+    show_flg = True
 
     # step 1. initialization
-    wgan = WGAN_GP((X,Y), nn_size_lst, mini_batch_size, epochs, show_flg, data_flg,
+    wgan = WGAN_GP((X, Y), nn_size_lst, mini_batch_size, epochs, show_flg, data_flg,
                    critic, distance_threshold)
 
     # step 2. train model
