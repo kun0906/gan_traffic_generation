@@ -4,11 +4,10 @@
     do data preprocessing, such as load data, normalization
 
 """
-
 __author__ = 'Learn-Live'
 
-import os
 import logging
+import os
 import random
 
 import numpy as np

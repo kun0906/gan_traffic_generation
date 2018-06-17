@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    autoencoder:
+   @ autoencoder:
             reduce features' dimensions
 
     ref:  https://github.com/L1aoXingyu/pytorch-beginner/tree/master/08-AutoEncoder
           (__author__ = 'SherlockLiao')
 
 """
-
 __author__ = 'Learn-Live'
 
 import os

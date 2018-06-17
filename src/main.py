@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-
 """
  @ main : entry point
 
  created on 20180615
 """
-
 __author__ = 'Learn-Live'
-
 
 import logging as lg
 import os
