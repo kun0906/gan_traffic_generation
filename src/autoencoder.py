@@ -7,12 +7,15 @@
           (__author__ = 'SherlockLiao')
 
 """
+
+__author__ = 'Learn-Live'
+
+
 import time
 
 from utils.data_loader import normalize_data
 from utils.show_save import save_data
 
-__author__ = 'SherlockLiao'
 
 import os
 
