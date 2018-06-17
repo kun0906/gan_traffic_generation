@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+    autoencoder:
+            reduce features' dimensions
+
+    ref:  https://github.com/L1aoXingyu/pytorch-beginner/tree/master/08-AutoEncoder
+          (__author__ = 'SherlockLiao')
+
+"""
 import time
 
 from utils.data_loader import normalize_data
@@ -14,33 +23,6 @@ from torch.autograd import Variable
 import torch.utils.data as Data
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
-
-
-#
-# if not os.path.exists('./mlp_img'):
-#     os.mkdir('./mlp_img')
-#
-#
-# def to_img(x):
-#     x = 0.5 * (x + 1)
-#     x = x.clamp(0, 1)
-#     x = x.view(x.size(0), 1, 28, 28)
-#     return x
-
-
-#
-#
-# num_epochs = 100
-# batch_size = 128
-# learning_rate = 1e-3
-#
-# img_transform = transforms.Compose([
-#     transforms.ToTensor(),
-#     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-# ])
-#
-# dataset = MNIST('./data', transform=img_transform)
-# dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 
 def print_net(net, describe_str='Net'):
