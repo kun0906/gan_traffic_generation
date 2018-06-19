@@ -205,7 +205,7 @@ class WGAN_GP(nn.Module):
                     accumulated_value += abs(self.train_hist['D_loss'][j + i].data.tolist())
                 # print(accumulated_value)
                 if abs(
-                        accumulated_value) / 10 < self.difference_value and epoch > 1000:  # last 10 results's mean < 0.01, then break.
+                        accumulated_value) / 10 < self.difference_value and epoch > 10:  # last 10 results's mean < 0.01, then break.
                     print('training finish, it takes epochs =', epoch)
                     break
             if ((epoch) % self.batch_size) == 0:

@@ -130,17 +130,18 @@ def divide_training_testing_data(X, Y, training_set_percent=0.3, repeatable=Fals
     sample_size = int(len(X) * training_set_percent)
     if repeatable:
         for i in range(sample_size):
-            index = random.randint(0, len(new_X))
+            index = random.randint(0, len(new_X) - 1)
             training_set['X'].append(new_X[index])
             training_set['Y'].append(new_Y[index])
         for j in range(len(X) - sample_size):
-            index = random.randint(0, len(new_X))
+            index = random.randint(0, len(new_X) - 1)
             testing_set['X'].append(new_X[index])
             testing_set['Y'].append(new_Y[index])
     else:
         for i in range(sample_size):
-            index = random.randint(0, len(new_X))
-            print(index, len(new_X))
+            index = random.randint(0,
+                                   len(new_X) - 1)  # Return random integer in range [a, b], including both end points
+            # print(index, len(new_X))
             training_set['X'].append(new_X[index])
             training_set['Y'].append(new_Y[index])
             new_X.pop(index)
@@ -163,6 +164,23 @@ def save_data(X, Y, output_file='results.txt'):
                 line_tmp += str(X[i][j]) + ','
             line_tmp += str(Y[i])
             f_out.write(line_tmp + '\n')
+
+    return output_file
+
+
+def merge_data_into_one_file(training_set_file, generated_data_file, output_file='merge_all_in_one_file.txt'):
+    with open(output_file, 'w') as out_f:
+        with open(training_set_file, 'r') as in_f_1:
+            line = in_f_1.readline()
+            while line:
+                out_f.write(line)
+                line = in_f_1.readline()
+
+        with open(generated_data_file, 'r') as in_f_2:
+            line = in_f_2.readline()
+            while line:
+                out_f.write(line)
+                line = in_f_2.readline()
 
     return output_file
 

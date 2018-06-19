@@ -4,17 +4,24 @@
 
  created on 20180615
 """
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score
+
 __author__ = 'Learn-Live'
 
 import logging as lg
 import os
 import sys
 import time
+import numpy as np
 
 import torch
 
 from utilties.data_preprocess import load_data_from_file, select_features, normalize_data, change_label, \
-    handle_abnormal_values, divide_training_testing_data, save_data
+    handle_abnormal_values, divide_training_testing_data, save_data, merge_data_into_one_file
 from wgan_gp_class import WGAN_GP
 
 lg_level = lg.DEBUG
@@ -60,7 +67,7 @@ def preprocess_data(X, Y):
     return new_X, new_Y
 
 
-def build_model(training_set, data_flg='BENIGN'):
+def build_generate_model(training_set, data_flg='BENIGN', distance_threshold=0.5):
     X = torch.Tensor(training_set['X'])
     Y = torch.Tensor(training_set['Y'])
     in_size = X.shape[1]
@@ -70,7 +77,7 @@ def build_model(training_set, data_flg='BENIGN'):
     epochs = 0  # invalid for my function, can't be str
     nn_size_lst = [in_size, h_size, out_size, g_input_size]
     critic = 3  # D update times per G
-    distance_threshold = 0.05
+    # distance_threshold = 0.1
     show_flg = True
 
     # step 1. initialization
@@ -83,8 +90,26 @@ def build_model(training_set, data_flg='BENIGN'):
     return wgan
 
 
-def evaluate_model(testing_set):
-    pass
+def build_model(training_set):
+    X = training_set['X']
+    Y = training_set['Y']
+    # model = LogisticRegression()
+    model = RandomForestClassifier(max_depth=2, random_state=0)
+    score = cross_val_score(model, X, Y, cv=10)
+    model.fit(X, Y)
+
+    return model
+
+
+def evaluate_model(model, testing_set):
+    X = testing_set['X']
+    Y_true = testing_set['Y']
+    Y_preds = model.predict(X)
+
+    acc = accuracy_score(Y_true, Y_preds)
+    cm = confusion_matrix(Y_true, Y_preds)
+
+    return cm, acc
 
 
 if __name__ == '__main__':
@@ -106,19 +131,22 @@ if __name__ == '__main__':
         os.mkdir(training_testing_data_out_dir)
 
     training_set, testing_set = divide_training_testing_data(new_X, new_Y, training_set_percent, repeatable=False)
-
-    save_data(training_set['X'], training_set['Y'],
-              output_file=os.path.join(training_testing_data_out_dir, str(training_set_percent) + '_training_set.txt'))
+    training_set_file = os.path.join(training_testing_data_out_dir, str(training_set_percent) + '_training_set.txt')
+    save_data(training_set['X'], training_set['Y'], output_file=training_set_file)
     save_data(testing_set['X'], testing_set['Y'], output_file=os.path.join(training_testing_data_out_dir, str(
         1 - training_set_percent) + '_testing_set.txt'))
 
-    # step 2. build model
+    # step 2. build generated model
     # wgan_gp_model=build_model(training_set)
     generated_data_num = 1000
     g_input_size = 3
     generated_results_out_dir = os.path.join(results_data_dir, str(generated_data_num) + '_generated_samples')
     if not os.path.exists(generated_results_out_dir):
         os.mkdir(generated_results_out_dir)
+
+    training_set_with_generated_data_file = os.path.join(results_data_dir, str(
+        training_set_percent) + '_training_set_with_generated_data.txt')
+    generated_data = {'BENIGN': [], 'ATTACK': []}
     for i in range(2):
         if i == 0:
             data_flg = 'BENIGN'
@@ -126,15 +154,52 @@ if __name__ == '__main__':
         else:
             data_flg = 'ATTACK'
             label = 0
-        output_file = os.path.join(generated_results_out_dir, data_flg + '.txt')
-        wgan_gp_model = build_model(training_set, data_flg)
+        generated_data_file = os.path.join(generated_results_out_dir, data_flg + '.txt')
+        wgan_gp_model = build_generate_model(training_set, data_flg, distance_threshold=0.9)
 
         # step 2.1 generated data
         noise_data = torch.randn((generated_data_num, g_input_size))
         generated_X = wgan_gp_model.G(noise_data)
         # step 2.2 save data
         generated_Y = [label for j in range(generated_data_num)]
-        save_data(generated_X.tolist(), generated_Y, output_file)
+        save_data(generated_X.tolist(), generated_Y, output_file=generated_data_file)
+        generated_data[data_flg].append([generated_X.tolist(), generated_Y])
 
-    # step 3. evaluat model
-    evaluate_model(testing_set)
+    # generated_data_file = os.path.join(generated_results_out_dir, 'generated_data.txt')
+    # if os.path.exists(generated_data_file):
+    #     os.remove(generated_data_file)
+    # save_data()
+    # merge_data_into_one_file(training_set_file, generated_data_file, output_file=training_set_with_generated_data_file)
+    # X_with_generated_data,Y_with_generated_data = load_data_from_file(training_set_with_generated_data_file)
+    # X_with_generated_data=np.asarray(X_with_generated_data,dtype='float')
+    # Y_with_generated_data=np.asarray(Y_with_generated_data, dtype='int')
+    # #  normalize data
+    # new_X_with_generated_data = normalize_data(X_with_generated_data)
+    # # lg.debug(new_X)
+    new_X_with_generated_data = training_set['X'] + list(map(lambda x: x[0], generated_data['BENIGN']))[0] + \
+                                list(map(lambda x: x[0], generated_data['ATTACK']))[0]
+    Y_with_generated_data = training_set['Y'] + list(map(lambda x: x[1], generated_data['BENIGN']))[0] + \
+                            list(map(lambda x: x[1], generated_data['ATTACK']))[0]
+    training_set_with_generated_data = {'X': new_X_with_generated_data, 'Y': Y_with_generated_data}
+    # step 2.1 build classifier
+    classifier_model = build_model(training_set)
+    classifier_model_with_generated_data = build_model(training_set_with_generated_data)
+
+    # step 3. evaluate model
+    # step 3.1 evaluate model on training set
+    lg.info('---evaluate model on training set')
+    cm, acc = evaluate_model(classifier_model, training_set)
+    lg.info('Confusion Matrix:%s' % cm)
+    lg.info('Accuracy:%.4f' % acc)
+    cm, acc = evaluate_model(classifier_model_with_generated_data, training_set_with_generated_data)
+    lg.info('Confusion Matrix:%s' % cm)
+    lg.info('Accuracy:%.4f\n' % acc)
+
+    # step 3.2 evaluate model on testing set
+    lg.info('***evaluate model on testing set')
+    cm, acc = evaluate_model(classifier_model, testing_set)
+    lg.info('Confusion Matrix:%s' % cm)
+    lg.info('Accuracy:%.4f' % acc)
+    cm, acc = evaluate_model(classifier_model_with_generated_data, testing_set)
+    lg.info('Confusion Matrix:%s' % cm)
+    lg.info('Accuracy:%.4f\n' % acc)
