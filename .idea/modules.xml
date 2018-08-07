@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/GAN_Based_Traffic_Generation_20180505.iml" filepath="$PROJECT_DIR$/.idea/GAN_Based_Traffic_Generation_20180505.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/Pytorch-Test-20180504.iml" filepath="$PROJECT_DIR$/.idea/Pytorch-Test-20180504.iml" />
     </modules>
   </component>
 </project>

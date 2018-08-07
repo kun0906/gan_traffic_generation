@@ -27,7 +27,7 @@ def print_network(describe_str,net):
 class WGAN(nn.Module):
 
     def __init__(self, *args, **kwargs):
-        # super(WGAN,self).__init__() # python 2.x
+        # super(GAN,self).__init__() # python 2.x
         super().__init__()  # python 3.x
 
         # divide data
