@@ -47,7 +47,7 @@ class GAN(nn.Module):
 
         self.D = nn.Sequential(nn.Linear(self.in_size, self.h_size * 2), nn.Tanh(),
                                nn.Linear(self.h_size * 2, self.h_size), nn.Tanh(),
-                               nn.Linear(self.h_size, self.out_size), nn.Sigmoid()
+                               nn.Linear(self.h_size, self.out_size)
                                )
 
         self.G = nn.Sequential(nn.Linear(self.g_in_size, self.h_size), nn.Tanh(),
@@ -119,7 +119,8 @@ class GAN(nn.Module):
                 # update D network
                 self.d_optimizer.zero_grad()
                 D_real = self.D(b_x)
-                D_real_loss = self.criterion(D_real, valid)
+                # D_real_loss = self.criterion(D_real, valid)
+                D_real_loss=D_real
                 G_ = self.G(z_)  # detach to avoid training G on these labels
                 # for g_i in range(len(G_)):
                 #     for g_step, g_j in enumerate(indexs_random):
@@ -127,9 +128,10 @@ class GAN(nn.Module):
                 #
                 # G_ = b_x_attack
                 D_fake = self.D(G_.detach())
-                D_fake_loss = self.criterion(D_fake, fake)
+                # D_fake_loss = self.criterion(D_fake, fake)
+                D_fake_loss= D_fake
 
-                D_loss = (D_real_loss + D_fake_loss)
+                D_loss = nn.Sigmoid(D_real_loss - D_fake_loss)
                 D_loss.backward()
                 self.d_optimizer.step()
 
@@ -153,6 +155,7 @@ class GAN(nn.Module):
                     # G_ = b_x_attack
                     D_fake = self.D(G_)
                     G_loss = self.criterion(D_fake, valid)
+                    # G_loss = nn.Sigmoid(D_fake)
                     # self.train_hist['G_loss'].append(-G_loss.data[0])
                     # self.train_hist['G_loss'].append(D_real_loss.data - (-G_loss.data))
                     G_loss.backward()
