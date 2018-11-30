@@ -28,8 +28,15 @@ class TrafficDataset(Dataset):
 
         if normalization_flg:
             self.X = normalize_data(np.asarray(self.X, dtype=float), range_value=[-1, 1], eps=1e-5)
+            with open(input_file+'_normalized.csv', 'w') as fid_out:
+                for i in range(self.X.shape[0]):
+                    # print('i', i.data.tolist())
+                    tmp = [str(j) for j in self.X[i]]
+                    fid_out.write(','.join(tmp) + ','+str(int(self.y[i]))+'\n')
 
         self.transform = transform
+
+
 
     def __getitem__(self, index):
 
